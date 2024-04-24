@@ -1,0 +1,25 @@
+{
+  "name": "fishfinder",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx web-dev-server --open / --node-resolve"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "description": "",
+  "dependencies": {
+    "chroma-js": "^2.4.2",
+    "express": "^4.19.2",
+    "pixi.js": "^8.1.0",
+    "random": "^4.1.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@web/dev-server": "^0.4.4",
+    "@web/dev-server-rollup": "^0.6.1"
+  },
+  "type": "module"
+}
