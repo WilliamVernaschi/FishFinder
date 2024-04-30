@@ -5,7 +5,6 @@ class Column extends Container{
     constructor(signal, squareSize, height){
         super();
         this.H = height;
-        console.log(this.H);
         this.squareSize = squareSize;
 
         const sprite = Sprite.from(Texture.WHITE);
@@ -32,7 +31,7 @@ class Column extends Container{
     }
 
     _tintFromIntensity(intensity){
-        const scale = chroma.scale(['blue', 'red', 'yellow']);
+        const scale = chroma.scale(['blue', 'green', 'yellow', 'red']);
 
         return scale(intensity).hex();
 
@@ -41,25 +40,19 @@ class Column extends Container{
         data.reverse();
 
         const range = data[0].depth;
-        const maxHeight = this.H * 0.3
-        const pixelsCoveredByEachDataPoint = maxHeight / range;
-        let distanceCovered = 0;
+        let maxHeight = this.H;
+        const pixelsCoveredByEachDataPoint = maxHeight / data.length;
+        //console.log(pixelsCoveredByEachDataPoint);
+        
 
-        for(let yPos = 0, i = 0; yPos < maxHeight; yPos += this.squareSize){
+        for(let i = 0; i < data.length; i++){
             const square = Sprite.from(Texture.WHITE);
             square.width = this.squareSize;
-            square.height = this.squareSize;
+            square.height = pixelsCoveredByEachDataPoint;
             square.tint = this._tintFromIntensity(data[i].intensity);
 
-            square.y = this.H - this.squareSize - yPos;
-            distanceCovered += this.squareSize;
+            square.y = maxHeight - square.height * (i+1);
 
-            console.log(square.y);
-
-            if(distanceCovered >= pixelsCoveredByEachDataPoint){
-                distanceCovered = 0;
-                i++; // go to next data point
-            }
             this.addChild(square);
         }  
     }

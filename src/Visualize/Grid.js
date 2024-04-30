@@ -9,7 +9,6 @@ class Grid extends Container{
         this.resolution = resolution;
         this.columns = [];
         this.squareSize = height / resolution;
-        console.log(this.squareSize);
         this.sensorInfo = null;
 
         this.setupGrid();

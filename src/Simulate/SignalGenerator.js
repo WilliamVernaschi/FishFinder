@@ -1,43 +1,75 @@
 import random from 'random';
+import { MovingAverage } from '../MovingAverage.js';
 
-const DATAPOINTS_PER_SIGNAL = 20;
-const UNDERGROUND_STRUCTURE_PROB = 0.001;
-const FISH_PROB = 0.1;
+
+function distancePointToCircle(x, y, cx, cy, r){
+    return Math.abs(Math.sqrt((x - cx)**2 + (y - cy)**2) - r);
+}
 
 export class SignalGenerator{
-    constructor(){
-        this.lastOceanFloor = random.float(2, 7);
-        this.amplitude = random.float(0, 1);
+    constructor(fishProbability, undergroundStructureProbability, datapointsPerSignal, maxDepth){
+
+        this.fishProbability = fishProbability;
+        this.undergroundStructureProbability = undergroundStructureProbability;
+        this.datapointsPerSignal = datapointsPerSignal;
+        this.maxDepth = maxDepth;
+
+        this.y = random.float(2, maxDepth);
+        this.x = 0;
+
+        this.movingAverage = new MovingAverage(300);
+
+        this.fishes = [];
     }
 
     nextSignal(){
-        let signals = [];
 
-        if(random.float(0, 1) < 0.5) this.lastOceanFloor = random.float(2, 7);
-
-        
-        if(this.lastOceanFloor/7 < random.float(0, 1)){
-            this.lastOceanFloor += random.float(0, 0.1);
-        }
-        else {
-            this.lastOceanFloor -= random.float(0, 0.1);
+        if(random.float() < 0.01){
+            this.y = random.float(2, this.maxDepth);
         }
 
-        if(this.amplitude < random.float(0, 1)){
-            this.amplitude += random.float(0, 0.01);
+        if(random.float() < this.fishProbability){
+            this.fishes.push({
+                x: this.x + random.int(30, 100),
+                deltaY: random.float(0, 6), // altura acima do leito
+                size : random.float(1.0, 1.7)
+            });
+        }
+
+        if(this.y/this.maxDepth < random.float()){
+            this.y += random.float(0.25, 2);
+            this.y = Math.min(this.y, this.maxDepth);
         }
         else{
-            this.amplitude -= random.float(0, 0.01);
+            this.y -= random.float(0.25, 2);
+            this.y = Math.max(this.y, 0);
         }
+        this.movingAverage.add(this.y);
+        
+        
+        
+        let signal = [];
+        for(let i = 0; i < this.datapointsPerSignal; i++){
+            const depth = i*this.maxDepth/this.datapointsPerSignal;
 
-        for(let i = 0; i < DATAPOINTS_PER_SIGNAL; i++){
-            if(this.lastOceanFloor > i*7/20){
-                signals.push({depth: i*7/20, intensity: 0});
-            }
-            else{
-                signals.push({depth: i*7/20, intensity: Math.max(0, this.amplitude - random.float(0, 0.1))});
-            }
+            let fishSignal = 0;
+
+            this.fishes.forEach(fish => {
+                if(!fish.y) fish.y = Math.max(2, this.y - fish.deltaY);
+            })
+            this.fishes.forEach(fish => {
+                let dpc =  distancePointToCircle(this.x, depth, fish.x, fish.y, fish.size/2);
+                if(dpc < fish.size/2) fishSignal = Math.max(fishSignal, dpc/(fish.size/2))
+            })
+
+            signal.push({
+                depth,
+                intensity: depth >= this.movingAverage.getAverage() ? this.movingAverage.getAverage() / depth : fishSignal
+            })
         }
-        return signals;
+        this.x++;
+        return signal;
     }
 }
+
+

@@ -19,6 +19,8 @@ function sendToAllUsers(data) {
 
 let sending = false;
 
+const generator = new SignalGenerator(0.01, 0.05, 200, 30);
+
 app.get('/sensor', (req, res) => {
     const SSE = {
         'Content-Type': 'text/event-stream',
@@ -38,7 +40,7 @@ app.get('/sensor', (req, res) => {
     clients.push(newClient);
 
 
-    const generator = new SignalGenerator();
+    
 
     // envia um sinal a cada 20 + um valor aleatório entre 0 e 5 milissegundos
     // para simular um sinal real
