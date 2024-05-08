@@ -3,7 +3,7 @@ import { MovingAverage } from '../MovingAverage.js';
 
 
 function distancePointToCircle(x, y, cx, cy, r){
-    return Math.abs(Math.sqrt((x - cx)**2 + (y - cy)**2) - r);
+    return Math.abs(Math.sqrt((x - cx)**2 + 4*(y - cy)**2) - r);
 }
 
 export class SignalGenerator{
@@ -30,9 +30,9 @@ export class SignalGenerator{
 
         if(random.float() < this.fishProbability){
             this.fishes.push({
-                x: this.x + random.int(30, 100),
+                x: this.x + random.int(0, 5),
                 deltaY: random.float(0, 6), // altura acima do leito
-                size : random.float(1.0, 1.7)
+                size : random.float(0.5, 1.0)
             });
         }
 
@@ -67,7 +67,7 @@ export class SignalGenerator{
                 intensity: depth >= this.movingAverage.getAverage() ? this.movingAverage.getAverage() / depth : fishSignal
             })
         }
-        this.x++;
+        this.x += 0.01;
         return signal;
     }
 }

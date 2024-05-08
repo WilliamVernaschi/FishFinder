@@ -1,3 +1,4 @@
+
 let lastSensorEvent = null;
 
 const eventSource = new EventSource('http://localhost:3000/sensor');

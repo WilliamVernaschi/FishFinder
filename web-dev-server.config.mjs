@@ -13,6 +13,7 @@ export default {
         '**/node_modules/eventemitter3/**/*',
         '**/node_modules/parse-svg-path/**/*',
         '**/node_modules/@xmldom/**/*',
+        '**/node_modules/denque/**/*',
         '**/node_modules/chroma-js/**/*',
       ],
     }),
