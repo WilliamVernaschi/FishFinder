@@ -3,7 +3,7 @@ import { MovingAverage } from '../MovingAverage.js';
 
 
 function distancePointToCircle(x, y, cx, cy, r){
-    return Math.abs(Math.sqrt((x - cx)**2 + 4*(y - cy)**2) - r);
+    return Math.abs(Math.sqrt((x - cx)**2 + 3*(y - cy)**2) - r);
 }
 
 export class SignalGenerator{

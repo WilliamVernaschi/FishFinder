@@ -1,6 +1,7 @@
 import { Column } from "./Column.js";
 import { Container } from 'pixi.js';
-import Denque from "denque"
+import { Queue } from '@datastructures-js/queue';
+import Denque from "denque";
 
 class Grid extends Container{
     constructor(width, height, resolution){
@@ -8,11 +9,12 @@ class Grid extends Container{
         this.W = width;
         this.H = height;
         this.resolution = resolution;
-        this.columns = []
+        this.columns = new Denque();
         this.squareSize = height / resolution;
         this.sensorInfo = null;
         this.depthHistory = [];
         this.depthSum = 0;
+        this.currDepthView = 30;
 
         this.setupGrid();
     }
@@ -36,24 +38,16 @@ class Grid extends Container{
         this.width = width;
         this.height = height;
     }
-    moveLeft(){
-        this.columns.forEach(column => {
-            column.moveLeft();
-        });
-        if(this.columns[0].x < -2*this.squareSize){
-            this.pushColumn();
-            this.popFrontColumn();
+    moveLeft(deltaTime){
+        for(let i = 0; i < this.columns.length; i++){
+            this.columns.peekAt(i).moveLeft(deltaTime);
         }
-    }
-    pushColumn(){
-        const newColumn = new Column(this.sensorInfo, this.squareSize, this.H, this.getMaxDepthView());
-        newColumn.x = this.columns[this.columns.length - 1].x + this.squareSize;
-        this.columns.push(newColumn);
-        this.addChild(newColumn);
-    }
-    popFrontColumn(){
-        this.removeChildAt(0);
-        this.columns.shift();
+        if(this.columns.peekAt(0).x < -2*this.squareSize){
+            const col = this.columns.shift();
+            col.x = this.columns.peekBack().x + this.squareSize;
+            col.redrawColumn(this.currDepthView, this.sensorInfo);
+            this.columns.push(col);
+        }
     }
     getDepth(){
         if(!this.sensorInfo) return 0
@@ -62,12 +56,16 @@ class Grid extends Container{
             .depth
     }
     getMaxDepthView(){
-        return Math.ceil(this.depthSum/this.depthHistory.length + 2);
+        return Math.ceil(this.depthSum/this.depthHistory.length) + 2;
     }
     adjustDepthView(depthView){
-        this.columns.forEach(column => {
-            column.redrawColumn(depthView);
-        });
+        if(depthView === this.columns.peekFront().currMVD) return;
+        
+        for(let i = 0; i < this.columns.length; i++){
+            this.columns.peekAt(i).redrawColumn(depthView);
+        }
+        this.currDepthView = depthView;
+
     }
         
     

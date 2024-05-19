@@ -15,6 +15,7 @@ export default {
         '**/node_modules/@xmldom/**/*',
         '**/node_modules/denque/**/*',
         '**/node_modules/chroma-js/**/*',
+        '**/node_modules/@datastructures-js/queue/**/*'
       ],
     }),
   ],

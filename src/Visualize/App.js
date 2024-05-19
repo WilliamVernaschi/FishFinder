@@ -10,7 +10,7 @@ class Application {
 
         // Cria a aplicação PIXI
         this.app = new PIXI.Application();
-        await this.app.init({resizeTo: window, background: 0x0000ff});
+        await this.app.init({resizeTo: window, background: 0x000000});
         
         // Adiciona o canvas ao HTML
         document.body.appendChild(this.app.canvas);
@@ -45,14 +45,10 @@ class Application {
 
         depthText.text = `${this.grid.getDepth()}m`;
 
-        
-
-        
-
-        
 
         this.maxDepthView = 30;
-
+        
+        this.scale = new PIXI.Container();
         this._placeScale(this.maxDepthView);
 
         setInterval(() => {
@@ -71,7 +67,8 @@ class Application {
 
 
         
-        this.app.ticker.maxFPS = this.app.ticker.minFPS = this.config.framesPerSecond;
+        this.app.ticker.maxFPS = this.config.framesPerSecond;
+        this.app.ticker.minFPS = this.config.framesPerSecond;
 
         this.start();
     }
@@ -80,8 +77,6 @@ class Application {
         this._placeScale(maxDepthView);
     }
     _placeScale(maxDepthView){
-        this.scale = new PIXI.Container();
-
         
         for(let i = 1; i < maxDepthView; i+=3){
             const text = new PIXI.Text({text: `${i}`, style: this.config.scaleStyle});
@@ -89,14 +84,13 @@ class Application {
             text.y = i*this.app.canvas.height/maxDepthView;
             text.anchor.set(0.5);
             this.scale.addChild(text);
-            //console.log(text.y)
         }
         this.app.stage.addChild(this.scale);
     }
     start(){
         
-        this.app.ticker.add(() => {
-            this.grid.moveLeft();
+        this.app.ticker.add((time) => {
+            this.grid.moveLeft(time.deltaTime);
             this.grid.updateSensorInfo(this.getSensorInfo())
         });
 

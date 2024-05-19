@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js'
 export const config = {
     "resolution": 300, // número de quadrados em uma coluna do visor
     "receiverDelay": 20, // período de recepção do sinal emitido pelo transmissor, em milissegundos
-    "framesPerSecond" : 10 
+    "framesPerSecond" : 60 
 }
 
 config.depthStyle = new PIXI.TextStyle({
