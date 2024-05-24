@@ -1,10 +1,19 @@
 import * as PIXI from 'pixi.js';
+import { gsap } from 'gsap';
+import { PixiPlugin } from "gsap/PixiPlugin";
 import { Grid } from './Grid.js'
 import { getSensorInfo } from './../Simulate/Listener.js'
 
+function gsapTest(pixiObj){
+    setInterval(() => {gsap.to(pixiObj, {pixi : {scaleY: 1.5}, duration: 0.75} )}, 2000);
+    setTimeout(() => {setInterval(() => {gsap.to(pixiObj, {pixi: { scaleY: 1}, duration: 0.75} )}, 2000)}, 1000 );            
+}
 
 class Application {
     async run(config){
+
+        gsap.registerPlugin(PixiPlugin);
+        PixiPlugin.registerPIXI(PIXI);
 
         this.config = config;
 
@@ -43,7 +52,7 @@ class Application {
         this.app.stage.addChild(depthText)
         this.app.stage.addChild(tempText)
 
-        depthText.text = `${this.grid.getDepth()}m`;
+        depthText.text = `${this.grid.getDepth().toFixed(2)}m`;
 
 
         this.maxDepthView = 30;
@@ -52,7 +61,7 @@ class Application {
         this._placeScale(this.maxDepthView);
 
         setInterval(() => {
-            depthText.text = `${this.grid.getDepth()}m`;
+            depthText.text = `${this.grid.getDepth().toFixed(2)}m`;
             
             //console.log(this.maxDepthView)
         }, 1000)
@@ -87,12 +96,21 @@ class Application {
         }
         this.app.stage.addChild(this.scale);
     }
+    
     start(){
         
         this.app.ticker.add((time) => {
             this.grid.moveLeft(time.deltaTime);
             this.grid.updateSensorInfo(this.getSensorInfo())
+
+
         });
+        /*
+        for(let i = 0; i < this.grid.columns.length; i++){
+            gsapTest(this.grid.columns.peekAt(i));
+        }
+        */
+
 
     }
 }

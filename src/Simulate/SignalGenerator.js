@@ -20,13 +20,13 @@ export class SignalGenerator{
         this.movingAverage = new MovingAverage(300);
 
         this.fishes = [];
+
+        
     }
 
     nextSignal(){
 
-        if(random.float() < 0.01){
-            this.y = random.float(2, this.maxDepth);
-        }
+        
 
         if(random.float() < this.fishProbability){
             this.fishes.push({

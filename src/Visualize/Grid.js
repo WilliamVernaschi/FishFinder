@@ -2,6 +2,11 @@ import { Column } from "./Column.js";
 import { Container } from 'pixi.js';
 import { Queue } from '@datastructures-js/queue';
 import Denque from "denque";
+import { gsap } from 'gsap';
+
+
+
+
 
 class Grid extends Container{
     constructor(width, height, resolution){
@@ -45,7 +50,7 @@ class Grid extends Container{
         if(this.columns.peekAt(0).x < -2*this.squareSize){
             const col = this.columns.shift();
             col.x = this.columns.peekBack().x + this.squareSize;
-            col.redrawColumn(this.currDepthView, this.sensorInfo);
+            col.redrawColumn(this.sensorInfo);
             this.columns.push(col);
         }
     }
@@ -59,10 +64,10 @@ class Grid extends Container{
         return Math.ceil(this.depthSum/this.depthHistory.length) + 2;
     }
     adjustDepthView(depthView){
-        if(depthView === this.columns.peekFront().currMVD) return;
+        //if(depthView === this.columns.peekFront().currMVD) return;
         
         for(let i = 0; i < this.columns.length; i++){
-            this.columns.peekAt(i).redrawColumn(depthView);
+            this.columns.peekAt(i).adjustDepth(depthView);
         }
         this.currDepthView = depthView;
 

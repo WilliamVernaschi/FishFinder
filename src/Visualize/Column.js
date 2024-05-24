@@ -1,7 +1,10 @@
 import { Graphics, Sprite, Texture } from 'pixi.js'
 import chroma from 'chroma-js';
+import { gsap } from 'gsap';
 
 const scale = chroma.scale(['blue', 'green', 'yellow', 'red']);
+
+
 
 class Column extends Graphics{
     constructor(signal, squareSize, height, MVD){
@@ -34,14 +37,14 @@ class Column extends Graphics{
         return scale(intensity).hex();
 
     }
-    _columnFromSample(data, maxViewDepth){
+    _columnFromSample(data){
         
         
 
         if(data[0].depth < data[data.length - 1].depth)
             data.reverse();
         
-        const range = maxViewDepth || data[0].depth;
+        const range = data[0].depth;
 
 
         let dataPointsUsed = 0;
@@ -77,15 +80,27 @@ class Column extends Graphics{
         
 
     }
-    redrawColumn(maxViewDepth, signal){
+    redrawColumn(signal, depthView){
 
         if(signal) this.signal = signal;
         if(!this.signal) return;
 
-        this.currMVD = maxViewDepth;
         this.clear();
+        //this.scaleY = 30/depthView;
+        this._columnFromSample(this.signal.transducerData);
+    }
+    adjustDepth(depthView){
+        // depthView = 30, adjust to 1
+        // depthView = 15, adjust to 2
+        // depthView = 10, adjust to 3
+        
+        gsap.to(this, {pixi : {scaleY: 30/depthView}, duration: 0.75} );
 
-        this._columnFromSample(this.signal.transducerData, maxViewDepth);
+        
+
+
+
+
     }
     _columnFromThreshold(data){
         // ...
