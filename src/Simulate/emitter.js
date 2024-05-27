@@ -19,7 +19,7 @@ function sendToAllUsers(data) {
 
 let sending = false;
 
-const generator = new SignalGenerator(0.005, 0.05, 200, 30);
+const generator = new SignalGenerator(0.005, 0.05, 250, 30);
 
 app.get('/sensor', (req, res) => {
     const SSE = {

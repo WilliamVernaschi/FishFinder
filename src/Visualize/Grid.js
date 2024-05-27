@@ -30,6 +30,7 @@ class Grid extends Container{
             column.x = pos;
             this.columns.push(column);
             this.addChild(column);
+            
         }
     }
 
